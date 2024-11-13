@@ -1,17 +1,24 @@
+import { conexion } from "../conexion.js"
+
 class Libro {
     constructor(titulo, autor, anio, disponible){
         this._titulo = titulo,
         this._autor = autor,
         this._anio = anio,
-        this._disponnible = disponible
+        this._disponible = disponible
     }
-
-    
-  
 
     describir(){}
     prestar(){}
     devolver(){}
+    async registrar(){
+        const args = {
+            text: "INSERT INTO libros(titulo, autor, anio) VALUES($1, $2, $3) RETURNING *",
+            values: [this._titulo, this._autor, this._anio]
+        }
+        const result = await conexion.query(args)
+        return result.rows
+    }
 
     //Accesadores y Mutadores
     get titulo(){
@@ -39,4 +46,6 @@ class Libro {
         this._disponible = valor
     }
 }
+
+export {Libro}
 
