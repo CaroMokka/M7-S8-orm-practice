@@ -39,18 +39,17 @@ class Libro {
   async devolver() {
     await this.consultar();
     if (this._disponible) {
-      console.log(
-        "Imposible devolver, ya que el libro se encuentra disponible"
-      );
-      return false;
+      return { message: "Imposible devolver, ya que el libro se encuentra disponible", code: 422 };
+   
+      //return false;
     }
     const args = {
       text: "UPDATE libros SET disponible=true WHERE id=$1 RETURNING *",
       values: [this._id],
     };
     const res = await conexion.query(args);
-    console.log("Libro devuelto con éxito");
-    return res.rows;
+    return  { message: "Libro devuelto con éxito", code: 200 };
+    //return res.rows;
   }
   async registrar() {
     const args = {

@@ -11,7 +11,7 @@ http.createServer( async (request, response) => {
 
    
 
-    //GET
+    //GET - describir
     if ( method == "GET" && pathname == "/libro/describir") {
         const id = urlParsed.query.id
         const libro = new Libro(id)
@@ -26,7 +26,7 @@ http.createServer( async (request, response) => {
         return response.end(JSON.stringify({message: "Datos descriptivos del libro", data: description}))
     } 
 
-    // POST
+    // POST - prestar
     if(method == "POST" && pathname == "/libro/prestar"){
         let body = ""
         request.on("data", (chunk) => {
@@ -42,6 +42,23 @@ http.createServer( async (request, response) => {
         })
   
        
+    }
+
+    if(method == "POST" && pathname == "/libro/devolver"){
+        let body = ""
+        request.on("data", (chunk)=>{
+            body += chunk.toString()
+        })
+        request.on("end", async () => {
+            body = JSON.parse(body)
+            
+            const libro = new Libro(body.id)
+            const libroDevuelto = await libro.devolver()
+   
+            response.setHeader("Content-Type", "application/json")
+            response.writeHead(libroDevuelto.code)
+            return response.end(JSON.stringify({ message: libroDevuelto.message }))
+        })
     }
 
     //POST - Registrar
